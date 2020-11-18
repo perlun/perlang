@@ -58,6 +58,7 @@ You should now have a `perlang` executable. Run `make run` to run it. If you are
 ## Documentation
 
 - [docs/syntax-grammar.md](docs/syntax-grammar.md): Specification of the syntax grammar for the Perlang language.
+- [docs](docs): The source code to the https://perlang.org web site. Built using [docfx](https://dotnet.github.io/docfx)
 
 ## License
 
