@@ -39,6 +39,9 @@ jobs:
       - name: Build win-x64 release
         run: dotnet publish Perlang.ConsoleApp/Perlang.ConsoleApp.csproj -c Release -r win-x64 --self-contained true /p:SolutionDir=$(pwd)/
 
+      - name: Build osx-arm64 release
+        run: dotnet publish Perlang.ConsoleApp/Perlang.ConsoleApp.csproj -c Release -r osx-arm64 --self-contained true /p:SolutionDir=$(pwd)/
+
       #
       # Create .tar.gz archives
       #
@@ -53,6 +56,10 @@ jobs:
       - name: Create win-x64 .tar.gz file
         run: version=$(../../linux-x64/perlang -v) && tar cvzf ../perlang-$version-win-x64.tar.gz *
         working-directory: Perlang.ConsoleApp/bin/Release/netcoreapp3.1/win-x64/publish
+
+      - name: Create osx-arm64 .tar.gz file
+        run: version=$(../../linux-x64/perlang -v) && tar cvzf ../perlang-$version-osx-arm64.tar.gz *
+        working-directory: Perlang.ConsoleApp/bin/Release/netcoreapp3.1/osx-arm64/publish
 
       - name: List .tar.gz files
         run: ls -l Perlang.ConsoleApp/bin/Release/netcoreapp3.1/*/*.tar.gz
@@ -71,7 +78,7 @@ jobs:
           TARGET: ${{ secrets.SSH_REMOTE_TARGET }}
         if: github.ref == 'refs/heads/master'
 
-      - name: Upload osx-x64 .tar.gz file to build cloud
+      - name: Upload osx-x64 .tar.gz file to releases server
         uses: easingthemes/ssh-deploy@v2.1.1
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
@@ -88,6 +95,17 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rltgoDzvO"
           SOURCE: "./Perlang.ConsoleApp/bin/Release/netcoreapp3.1/win-x64/*.tar.gz"
+          REMOTE_HOST: ${{ secrets.SSH_REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
+          TARGET: ${{ secrets.SSH_REMOTE_TARGET }}
+        if: github.ref == 'refs/heads/master'
+
+      - name: Upload osx-arm64 .tar.gz file to releases server
+        uses: easingthemes/ssh-deploy@v2.1.1
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          ARGS: "-rltgoDzvO"
+          SOURCE: "./Perlang.ConsoleApp/bin/Release/netcoreapp3.1/osx-arm64/*.tar.gz"
           REMOTE_HOST: ${{ secrets.SSH_REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.SSH_REMOTE_USER }}
           TARGET: ${{ secrets.SSH_REMOTE_TARGET }}

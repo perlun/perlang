@@ -225,6 +225,10 @@ get_architecture() {
             _cputype=x64
             ;;
 
+        aarch64 | arm64)
+            _cputype=arm64
+            ;;
+
         *)
             err "unsupported CPU type: $_cputype"
 
